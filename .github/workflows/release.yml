@@ -110,10 +110,13 @@ jobs:
       - name: Prepare release files
         run: |
           ls -lah ./dist
-          # Flatten the artifact structure - move all files from subdirectories to dist/
-          find ./dist -mindepth 2 -type f -exec mv {} ./dist/ \;
-          # Remove empty subdirectories
-          find ./dist -mindepth 1 -type d -empty -delete
+          # Create a temporary directory for flattening
+          mkdir -p ./release-files
+          # Copy all files from subdirectories to release-files/
+          find ./dist -mindepth 2 -type f -exec cp {} ./release-files/ \;
+          # Replace dist with release-files
+          rm -rf ./dist
+          mv ./release-files ./dist
           ls -lah ./dist
 
       - name: Create GitHub Release and upload assets
