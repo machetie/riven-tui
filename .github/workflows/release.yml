@@ -110,8 +110,10 @@ jobs:
       - name: Prepare release files
         run: |
           ls -lah ./dist
-          # Flatten the artifact structure
-          find ./dist -name "riven-tui-*" -type f -exec mv {} ./dist/ \;
+          # Flatten the artifact structure - move all files from subdirectories to dist/
+          find ./dist -mindepth 2 -type f -exec mv {} ./dist/ \;
+          # Remove empty subdirectories
+          find ./dist -mindepth 1 -type d -empty -delete
           ls -lah ./dist
 
       - name: Create GitHub Release and upload assets
