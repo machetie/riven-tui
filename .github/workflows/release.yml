@@ -110,6 +110,13 @@ jobs:
       - name: Prepare release files
         run: |
           ls -lah ./dist
+          # Debug: show contents of each subdirectory
+          for dir in ./dist/*/; do
+            if [ -d "$dir" ]; then
+              echo "Contents of $dir:"
+              ls -lah "$dir"
+            fi
+          done
           # Flatten the artifact structure - copy all files from subdirectories to dist/
           for dir in ./dist/*/; do
             if [ -d "$dir" ]; then
