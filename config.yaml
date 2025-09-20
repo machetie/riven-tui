@@ -1,0 +1,79 @@
+# Riven TUI Configuration File
+# This file contains settings for connecting to your Riven instance
+
+# API Configuration
+api:
+  # Base URL of your Riven instance (required)
+  endpoint: "http://localhost:8080"
+  
+  # Bearer token for authentication (if required by your Riven instance)
+  # You can get this from your Riven web interface under Settings > API
+  token: "test-api-key"
+
+  # Request timeout
+  timeout: "30s"
+
+  # Enable debug logging for API requests
+  debug: false
+
+  # Retry configuration
+  retry:
+    max_attempts: 3
+    initial_delay: 1s
+    max_delay: 10s
+
+# UI Configuration
+ui:
+  # Auto-refresh interval for dashboard
+  refresh_interval: "5s"
+
+  # Theme name: "default", "dark", "light"
+  theme: "default"
+
+  # Number of items to show per page in lists
+  page_size: 50
+
+  # Enable mouse support (experimental)
+  mouse_support: false
+
+  # Animation settings
+  animations:
+    enabled: true
+    spinner_speed: 100ms
+
+  # Notification settings
+  notifications:
+    enabled: true
+    duration: 3s
+    position: "top-right"  # top-right, top-left, bottom-right, bottom-left, center
+
+# Logging Configuration
+logging:
+  # Log level: "debug", "info", "warn", "error"
+  level: "info"
+
+  # Log file path (empty for console only)
+  file: ""
+
+  # Enable structured JSON logging
+  json: false
+
+  # Log rotation
+  rotation:
+    max_size: 100MB
+    max_age: 30d
+    max_backups: 5
+
+# Feature flags
+features:
+  # Enable experimental features
+  experimental: false
+
+  # Enable real-time event streaming
+  real_time_events: true
+
+  # Enable advanced search
+  advanced_search: true
+
+  # Enable item actions (retry, reset, etc.)
+  item_actions: true

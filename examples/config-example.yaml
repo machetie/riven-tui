@@ -1,0 +1,218 @@
+# Riven TUI Configuration Example
+# This file demonstrates all available configuration options
+
+# API Configuration - Connection to your Riven instance
+api:
+  # Base URL of your Riven instance (required)
+  # This should point to your Riven server
+  endpoint: "http://localhost:8080"
+  
+  # Bearer token for authentication (if required by your Riven instance)
+  # You can get this from your Riven web interface under Settings > API
+  # Leave empty if your Riven instance doesn't require authentication
+  token: "your-bearer-token-here"
+  
+  # Request timeout for API calls
+  # Increase this if you have a slow connection or Riven instance
+  timeout: "30s"
+  
+  # Enable debug logging for API requests
+  # This will log all HTTP requests and responses (useful for troubleshooting)
+  debug: false
+  
+  # Retry configuration for failed requests
+  retry:
+    # Maximum number of retry attempts for failed requests
+    max_attempts: 3
+    
+    # Initial delay before first retry
+    initial_delay: 1s
+    
+    # Maximum delay between retries (exponential backoff)
+    max_delay: 10s
+
+# User Interface Configuration
+ui:
+  # Auto-refresh interval for data updates
+  # How often the TUI will refresh data from the API
+  refresh_interval: "5s"
+  
+  # Theme selection: "default", "dark", "light"
+  # - default: Balanced colors suitable for most terminals
+  # - dark: Optimized for dark terminal backgrounds
+  # - light: Optimized for light terminal backgrounds
+  theme: "default"
+  
+  # Number of items to display per page in lists
+  # Larger values show more items but may impact performance
+  page_size: 50
+  
+  # Enable mouse support (experimental)
+  # Allows clicking on UI elements (may not work in all terminals)
+  mouse_support: false
+  
+  # Animation settings
+  animations:
+    # Enable animations (spinners, transitions, etc.)
+    enabled: true
+    
+    # Speed of spinner animations
+    spinner_speed: 100ms
+    
+  # Notification settings
+  notifications:
+    # Enable toast notifications
+    enabled: true
+    
+    # How long notifications stay visible
+    duration: 3s
+    
+    # Position of notifications on screen
+    # Options: "top-right", "top-left", "bottom-right", "bottom-left", "center"
+    position: "top-right"
+
+# Logging Configuration
+logging:
+  # Log level: "debug", "info", "warn", "error"
+  # - debug: Very verbose, includes all API requests/responses
+  # - info: General information about application state
+  # - warn: Warning messages about potential issues
+  # - error: Only error messages
+  level: "info"
+  
+  # Log file path (empty for console only)
+  # If specified, logs will be written to this file in addition to console
+  # Use absolute path or relative to working directory
+  file: ""
+  
+  # Enable structured JSON logging
+  # Useful for log aggregation systems
+  json: false
+  
+  # Log rotation settings (only applies when file is specified)
+  rotation:
+    # Maximum size of log file before rotation
+    max_size: 100MB
+    
+    # Maximum age of log files before deletion
+    max_age: 30d
+    
+    # Maximum number of old log files to keep
+    max_backups: 5
+
+# Feature flags - Enable/disable specific features
+features:
+  # Enable experimental features (may be unstable)
+  experimental: false
+  
+  # Enable real-time event streaming
+  # Shows live updates of system status, downloads, etc.
+  real_time_events: true
+  
+  # Enable advanced search functionality
+  # Provides more sophisticated search and filtering options
+  advanced_search: true
+  
+  # Enable item actions (retry, reset, pause, etc.)
+  # Allows performing actions on media items directly from the TUI
+  item_actions: true
+  
+  # Enable detailed item views
+  # Shows comprehensive information about media items including streams
+  detailed_views: true
+  
+  # Enable settings management
+  # Allows viewing and modifying Riven settings through the TUI
+  settings_management: true
+
+# Performance tuning
+performance:
+  # Maximum number of concurrent API requests
+  max_concurrent_requests: 10
+  
+  # Cache settings for API responses
+  cache:
+    # Enable response caching
+    enabled: true
+    
+    # Cache TTL for different types of data
+    ttl:
+      # How long to cache item lists
+      items: "30s"
+      
+      # How long to cache system stats
+      stats: "10s"
+      
+      # How long to cache settings
+      settings: "5m"
+  
+  # UI performance settings
+  ui_performance:
+    # Maximum number of items to render in tables
+    max_table_rows: 1000
+    
+    # Debounce delay for search input
+    search_debounce: "300ms"
+
+# Keyboard shortcuts customization
+# Note: This is for documentation - actual keybindings are currently hardcoded
+keybindings:
+  global:
+    quit: "q"
+    help: "?"
+    refresh: "r"
+    
+  navigation:
+    dashboard: "d"
+    items: "m"
+    settings: "s"
+    logs: "l"
+    
+  items_screen:
+    search: "/"
+    filter: "f"
+    sort: "s"
+    clear: "c"
+    next_page: "n"
+    prev_page: "p"
+    actions: "a"
+    details: "enter"
+    
+  item_detail:
+    tab_1: "1"
+    tab_2: "2"
+    tab_3: "3"
+    next_tab: "tab"
+    prev_tab: "shift+tab"
+    back: "esc"
+
+# Integration settings
+integrations:
+  # Clipboard integration
+  clipboard:
+    # Enable copying data to clipboard
+    enabled: true
+    
+    # What to copy when copying items
+    copy_format: "json"  # "json", "yaml", "csv"
+  
+  # External editor integration
+  editor:
+    # Command to open external editor
+    command: "vim"
+    
+    # Arguments to pass to editor
+    args: []
+
+# Development and debugging
+development:
+  # Enable development mode (more verbose logging, debug features)
+  enabled: false
+  
+  # Profile performance
+  profiling:
+    enabled: false
+    port: 6060
+  
+  # Mock API responses (for testing without Riven instance)
+  mock_api: false
