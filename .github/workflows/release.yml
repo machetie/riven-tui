@@ -110,21 +110,10 @@ jobs:
       - name: Prepare release files
         run: |
           ls -lah ./dist
-          # Debug: show contents of each subdirectory
-          for dir in ./dist/*/; do
-            if [ -d "$dir" ]; then
-              echo "Contents of $dir:"
-              ls -lah "$dir"
-            fi
-          done
-          # Flatten the artifact structure - copy all files from subdirectories to dist/
-          for dir in ./dist/*/; do
-            if [ -d "$dir" ]; then
-              cp "$dir"* ./dist/ 2>/dev/null || true
-            fi
-          done
-          # Remove subdirectories
-          rm -rf ./dist/*/
+          # Flatten the artifact structure - move all files from subdirectories to dist/
+          find ./dist -mindepth 2 -type f -exec mv {} ./dist/ \;
+          # Remove empty subdirectories
+          find ./dist -mindepth 1 -type d -empty -delete
           ls -lah ./dist
 
       - name: Create GitHub Release and upload assets
