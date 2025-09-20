@@ -1,0 +1,120 @@
+name: release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: linux
+            arch: amd64
+            output: riven-tui-linux-amd64
+          - os: macos
+            arch: amd64
+            output: riven-tui-darwin-amd64
+          - os: macos
+            arch: arm64
+            output: riven-tui-darwin-arm64
+          - os: windows
+            arch: amd64
+            output: riven-tui-windows-amd64.exe
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      - name: Ensure modules
+        run: |
+          go mod download
+          go mod verify
+
+      - name: Build
+        env:
+          CGO_ENABLED: 0
+        run: |
+          case "${{ matrix.os }}" in
+            linux) GOOS=linux GOARCH=${{ matrix.arch }} ;;
+            macos) GOOS=darwin GOARCH=${{ matrix.arch }} ;;
+            windows) GOOS=windows GOARCH=${{ matrix.arch }} ;;
+          esac
+          output="${{ matrix.output }}"
+          go build -ldflags="-s -w -X main.appVersion=${{ github.ref_name }}" -trimpath -o "${output}" cmd/riven-tui/main.go
+          ls -lh "${output}"
+
+      - name: Binary Smoke Test
+        run: |
+          if [ "${{ matrix.os }}" = "linux" ]; then
+            # Test Linux binary execution
+            out=$(./${{ matrix.output }} --version)
+            echo "version-out: $out"
+            if [ "$out" != "Riven TUI ${{ github.ref_name }}" ]; then
+              echo "Version mismatch: expected 'Riven TUI ${{ github.ref_name }}', got '$out'"
+              exit 1
+            fi
+          else
+            # For non-Linux binaries, check embedded version string
+            if ! strings "${{ matrix.output }}" | grep -q "${{ github.ref_name }}"; then
+              echo "Embedded version ${{ github.ref_name }} not found in binary"
+              exit 1
+            fi
+            echo "Embedded version ${{ github.ref_name }} found in ${{ matrix.output }}"
+          fi
+
+      - name: Create checksums
+        run: |
+          sha256sum ${{ matrix.output }} > "${{ matrix.output }}.sha256"
+
+      - name: Upload artifacts (for debugging)
+        uses: actions/upload-artifact@v4
+        with:
+          name: "${{ matrix.output }}"
+          path: |
+            ${{ matrix.output }}
+            ${{ matrix.output }}.sha256
+
+  publish:
+    needs: build-and-release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./dist
+
+      - name: Prepare release files
+        run: |
+          ls -lah ./dist
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
