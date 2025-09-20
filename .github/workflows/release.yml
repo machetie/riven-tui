@@ -110,11 +110,15 @@ jobs:
       - name: Prepare release files
         run: |
           ls -lah ./dist
+          # Flatten the artifact structure
+          find ./dist -name "riven-tui-*" -type f -exec mv {} ./dist/ \;
+          ls -lah ./dist
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v1
         with:
-          files: dist/*
+          files: |
+            dist/riven-tui-*
           generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
